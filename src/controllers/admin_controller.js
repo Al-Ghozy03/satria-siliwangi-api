@@ -12,7 +12,10 @@ class Admin extends Server {
       if (!data) return super.response(res, 404, "email tidak ditemukan");
       const check = await bcrypt.compareSync(password, data.password);
       if (!check) return super.response(res, 401, "password salah");
-      const token = jwt.sign({ email: data.email }, process.env.JWT_SIGN);
+      const token = jwt.sign(
+        { id: data.id, email: data.email },
+        process.env.JWT_SIGN
+      );
       return super.response(res, 200, "success", { token });
     } catch (er) {
       console.log(er);
