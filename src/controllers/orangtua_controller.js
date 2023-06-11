@@ -1,7 +1,9 @@
 const { Op } = require("sequelize");
 const Server = require("./server");
 const orangtuamodel = require("../../models").orangtua;
+const siswamodel = require("../../models").siswa;
 const jwt = require("jsonwebtoken");
+const siswa = require("../../models/siswa");
 require("dotenv").config();
 
 class OrangTua extends Server {
@@ -79,6 +81,18 @@ class OrangTua extends Server {
           "no_telepon_ibu",
           "alamat",
         ],
+        include: {
+          model: siswamodel,
+          as: "siswa",
+          attributes: [
+            "id",
+            "no_induk_ss",
+            "nama",
+            "jenis_kelamin",
+            "no_jersey",
+            "foto_siswa",
+          ],
+        },
       });
       if (!data) return super.response(res, 404, "data tidak ditemukan");
       return super.response(res, 200, "success", data);

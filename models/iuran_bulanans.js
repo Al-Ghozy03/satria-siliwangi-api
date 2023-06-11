@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class iuran_bulanans extends Model {
     /**
@@ -10,17 +8,21 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      iuran_bulanans.belongsTo(models.siswa, { foreignKey: "id_siswa" });
+      iuran_bulanans.belongsTo(models.orangtua, { foreignKey: "id_orangtua" });
     }
   }
-  iuran_bulanans.init({
-    tanggal_pembayaran: DataTypes.DATEONLY,
-    status: DataTypes.ENUM("terbayar","belum terbayar"),
-    id_siswa: DataTypes.INTEGER,
-    id_orangtua: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'iuran_bulanans',
-  });
+  iuran_bulanans.init(
+    {
+      tanggal_pembayaran: DataTypes.DATEONLY,
+      status: DataTypes.ENUM("terbayar", "belum terbayar"),
+      id_siswa: DataTypes.INTEGER,
+      id_orangtua: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "iuran_bulanans",
+    }
+  );
   return iuran_bulanans;
 };
