@@ -35,7 +35,7 @@ module.exports = {
       },
       id_orangtua: {
         type: Sequelize.INTEGER,
-        onDelete: "RESTRICT",
+        onDelete: "CASCADE",
         onUpdate: "CASCADE",
         references: {
           model: "orangtuas",
