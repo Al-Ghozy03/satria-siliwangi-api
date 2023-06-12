@@ -1,16 +1,12 @@
-const { Op } = require("sequelize");
 const Server = require("./server");
+const absensimodel = require("../../models").absensi;
 const siswamodel = require("../../models").siswa;
-const fs = require("fs");
-require("dotenv").config();
 
-class Siswa extends Server {
-  async add(req, res) {
+class Absensi extends Server {
+  async create(req, res) {
     try {
       const body = req.body;
-      const url = `/${req.file.filename}`;
-      body.foto_siswa = url;
-      await siswamodel.create(body);
+      await absensimodel.create(body);
       return super.response(res, 200, "success");
     } catch (er) {
       console.log(er);
@@ -19,29 +15,32 @@ class Siswa extends Server {
   }
   async list(req, res) {
     try {
-      const { page, limit, q } = req.query;
+      const { page, limit, date } = req.query;
       const size = (parseInt(page) - 1) * parseInt(limit);
-      const { count, rows } = await siswamodel.findAndCountAll({
+      const { count, rows } = await absensimodel.findAndCountAll({
         ...(page !== undefined &&
           limit !== undefined && {
             offset: size,
             limit: parseInt(limit),
           }),
-        ...(q !== undefined && {
-          where: { nama: { [Op.substring]: q } },
-        }),
-        attributes: [
-          "id",
-          "no_induk_ss",
-          "ku_genap",
-          "nama",
-          "jenis_kelamin",
-          "tempat_lahir",
-          "tanggal_lahir",
-          "sekolah",
-          "no_jersey",
-          "id_orangtua",
-        ],
+        where: {
+          ...(date !== undefined && {
+            tanggal: date,
+          }),
+        },
+        order: [["tanggal", "DESC"]],
+        attributes: ["id", "tanggal", "jam", "status"],
+        include: {
+          model: siswamodel,
+          attributes: [
+            "id",
+            "no_induk_ss",
+            "nama",
+            "jenis_kelamin",
+            "no_jersey",
+            "foto_siswa",
+          ],
+        },
       });
       return super.responseWithPagination(
         res,
@@ -60,19 +59,19 @@ class Siswa extends Server {
   async detail(req, res) {
     try {
       const { id } = req.params;
-      const data = await siswamodel.findByPk(id, {
-        attributes: [
-          "id",
-          "no_induk_ss",
-          "ku_genap",
-          "nama",
-          "jenis_kelamin",
-          "tempat_lahir",
-          "tanggal_lahir",
-          "sekolah",
-          "no_jersey",
-          "id_orangtua",
-        ],
+      const data = await absensimodel.findByPk(id, {
+        attributes: ["id", "tanggal", "jam", "status"],
+        include: {
+          model: siswamodel,
+          attributes: [
+            "id",
+            "no_induk_ss",
+            "nama",
+            "jenis_kelamin",
+            "no_jersey",
+            "foto_siswa",
+          ],
+        },
       });
       if (!data) return super.response(res, 404, "data tidak ditemukan");
       return super.response(res, 200, "success", data);
@@ -84,14 +83,9 @@ class Siswa extends Server {
   async edit(req, res) {
     try {
       const { id } = req.params;
-      const data = await siswamodel.findByPk(id);
+      const data = await absensimodel.findByPk(id);
       if (!data) return super.response(res, 404, "data tidak ditemukan");
-      if (req.file !== undefined) {
-        fs.unlink(`public${data.foto_siswa}`, (er) => console.log(er));
-        const url = `/${req.file.filename}`;
-        req.body.foto_siswa = url;
-      }
-      await siswamodel.update(req.body, { where: { id } });
+      await absensimodel.update(req.body, { where: { id } });
       return super.response(res, 200, "success");
     } catch (er) {
       console.log(er);
@@ -101,10 +95,9 @@ class Siswa extends Server {
   async delete(req, res) {
     try {
       const { id } = req.params;
-      const data = await siswamodel.findByPk(id);
+      const data = await absensimodel.findByPk(id);
       if (!data) return super.response(res, 404, "data tidak ditemukan");
-      fs.unlink(`public${data.foto_siswa}`, (er) => console.log(er));
-      await siswamodel.destroy({ where: { id } });
+      await absensimodel.destroy({ where: { id } });
       return super.response(res, 200, "success");
     } catch (er) {
       console.log(er);
@@ -113,4 +106,4 @@ class Siswa extends Server {
   }
 }
 
-module.exports = new Siswa();
+module.exports = new Absensi();
