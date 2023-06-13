@@ -4,14 +4,14 @@ const orangtuamodel = require("../../models").orangtua;
 const siswaValidator = [
   check("no_induk_ss")
     .isLength({ min: 1 })
-    .withMessage("no induk tidak boleh kosong")
-    .isNumeric()
-    .withMessage("masukan no induk yang valid"),
+    .withMessage("no induk tidak boleh kosong"),
   check("ku_genap")
     .isLength({ min: 1 })
     .withMessage("KU genap tidak boleh kosong"),
   check("nama").isLength({ min: 1 }).withMessage("nama tidak boleh kosong"),
-  check("sekolah").isLength({ min: 1 }).withMessage("sekolah tidak boleh kosong"),
+  check("sekolah")
+    .isLength({ min: 1 })
+    .withMessage("sekolah tidak boleh kosong"),
   check("jenis_kelamin")
     .isLength({ min: 1 })
     .withMessage("tidak boleh kosong")

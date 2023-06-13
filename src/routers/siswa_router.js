@@ -14,6 +14,7 @@ router.post(
   siswa_controller.add
 );
 router.get("/", siswa_controller.list);
+router.get("/total", siswa_controller.total);
 router.get("/:id", siswa_controller.detail);
 router.put("/edit/:id", upload.single("foto_siswa"), siswa_controller.edit);
 router.delete("/delete/:id", siswa_controller.delete);

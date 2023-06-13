@@ -3,7 +3,6 @@ const Server = require("./server");
 const orangtuamodel = require("../../models").orangtua;
 const siswamodel = require("../../models").siswa;
 const jwt = require("jsonwebtoken");
-const siswa = require("../../models/siswa");
 require("dotenv").config();
 
 class OrangTua extends Server {
@@ -38,7 +37,7 @@ class OrangTua extends Server {
   }
   async list(req, res) {
     try {
-      const { page, limit } = req.query;
+      const { page, limit, q } = req.query;
       const size = (parseInt(page) - 1) * parseInt(limit);
       const { count, rows } = await orangtuamodel.findAndCountAll({
         ...(page !== undefined &&
@@ -46,6 +45,9 @@ class OrangTua extends Server {
             offset: size,
             limit: parseInt(limit),
           }),
+        where: {
+          ...(q !== undefined && { nama_ayah: { [Op.substring]: q } }),
+        },
         attributes: [
           "id",
           "nama_ayah",

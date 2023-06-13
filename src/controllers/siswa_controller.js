@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const Server = require("./server");
 const siswamodel = require("../../models").siswa;
+const orangtuamodel = require("../../models").orangtua;
 const fs = require("fs");
 require("dotenv").config();
 
@@ -40,8 +41,20 @@ class Siswa extends Server {
           "tanggal_lahir",
           "sekolah",
           "no_jersey",
-          "id_orangtua",
+          "foto_siswa",
         ],
+        include: {
+          model: orangtuamodel,
+          as: "orangtua",
+          attributes: [
+            "id",
+            "nama_ayah",
+            "no_telepon_ayah",
+            "nama_ibu",
+            "no_telepon_ibu",
+            "alamat",
+          ],
+        },
       });
       return super.responseWithPagination(
         res,
@@ -106,6 +119,15 @@ class Siswa extends Server {
       fs.unlink(`public${data.foto_siswa}`, (er) => console.log(er));
       await siswamodel.destroy({ where: { id } });
       return super.response(res, 200, "success");
+    } catch (er) {
+      console.log(er);
+      return super.response(res, 500, er);
+    }
+  }
+  async total(req, res) {
+    try {
+      const { count } = await siswamodel.findAndCountAll();
+      return super.response(res, 200, "success", { total: count });
     } catch (er) {
       console.log(er);
       return super.response(res, 500, er);
