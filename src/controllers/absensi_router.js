@@ -104,6 +104,9 @@ class Absensi extends Server {
       return super.response(res, 500, er);
     }
   }
+  async grafik(req,res){
+    
+  }
 }
 
 module.exports = new Absensi();
