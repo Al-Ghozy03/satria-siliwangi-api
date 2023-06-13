@@ -1,6 +1,5 @@
 const Server = require("./server");
 const iuranbulananmodel = require("../../models").iuran_bulanans;
-const siswamodel = require("../../models").siswa;
 const orangtuamodel = require("../../models").orangtua;
 require("dotenv").config();
 
@@ -10,14 +9,7 @@ class IuranBulanan extends Server {
       const body = req.body;
       for (let i = 0; i < body.length; i++) {
         const data = body[i];
-        const checkSiswa = await siswamodel.findByPk(data.id_siswa);
         const checkOrangtua = await orangtuamodel.findByPk(data.id_orangtua);
-        if (!checkSiswa)
-          return super.response(
-            res,
-            404,
-            `id siswa tidak ditemukan di field ke ${i + 1}`
-          );
         if (!checkOrangtua)
           return super.response(
             res,
@@ -44,10 +36,6 @@ class IuranBulanan extends Server {
           }),
         attributes: ["id", "tanggal_pembayaran", "status"],
         include: [
-          {
-            model: siswamodel,
-            attributes: ["id", "no_induk_ss", "nama", "no_jersey"],
-          },
           {
             model: orangtuamodel,
             attributes: [
@@ -80,10 +68,6 @@ class IuranBulanan extends Server {
       const data = await iuranbulananmodel.findByPk(id, {
         attributes: ["id", "tanggal_pembayaran", "status"],
         include: [
-          {
-            model: siswamodel,
-            attributes: ["id", "no_induk_ss", "nama", "no_jersey"],
-          },
           {
             model: orangtuamodel,
             attributes: [

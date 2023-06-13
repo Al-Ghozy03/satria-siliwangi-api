@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       tanggal_pembayaran: DataTypes.DATEONLY,
       status: DataTypes.ENUM("terbayar", "belum terbayar"),
-      id_siswa: DataTypes.INTEGER,
       id_orangtua: DataTypes.INTEGER,
     },
     {
