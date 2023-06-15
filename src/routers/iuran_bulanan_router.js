@@ -5,6 +5,7 @@ const router = require("express")();
 router.use(jwtMiddleware);
 router.post("/bulk", iuran_bulanan_controller.bulk);
 router.get("/", iuran_bulanan_controller.list);
+router.get("/total-perbulan", iuran_bulanan_controller.totalPerBulan);
 router.get("/:id", iuran_bulanan_controller.detail);
 router.put("/edit/:id", iuran_bulanan_controller.edit);
 router.delete("/delete/:id", iuran_bulanan_controller.delete);

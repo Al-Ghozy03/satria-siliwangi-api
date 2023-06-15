@@ -1,3 +1,4 @@
+const {  Op } = require("sequelize");
 const Server = require("./server");
 const iuranbulananmodel = require("../../models").iuran_bulanans;
 const orangtuamodel = require("../../models").orangtua;
@@ -109,6 +110,32 @@ class IuranBulanan extends Server {
     } catch (er) {
       console.log(er);
       return super.response(res, 500, er);
+    }
+  }
+  async totalPerBulan(req, res) {
+    try {
+      const date = new Date();
+      const { count } = await iuranbulananmodel.findAndCountAll({
+        where: {
+          tanggal_pembayaran: {
+            [Op.gte]: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth(),
+              1
+            ),
+            [Op.lt]: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth() + 1,
+              1
+            ),
+          },
+        },
+      });
+      console.log(date);
+      return super.response(res, 200, "success", { total: count });
+    } catch (er) {
+      console.log(er);
+      return super.response(res, 200, er);
     }
   }
 }
