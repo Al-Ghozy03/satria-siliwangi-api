@@ -1,4 +1,4 @@
-const {  Op } = require("sequelize");
+const { Op } = require("sequelize");
 const Server = require("./server");
 const iuranbulananmodel = require("../../models").iuran_bulanans;
 const orangtuamodel = require("../../models").orangtua;
@@ -27,7 +27,7 @@ class IuranBulanan extends Server {
   }
   async list(req, res) {
     try {
-      const { page, limit } = req.query;
+      const { page, limit, id } = req.query;
       const size = (parseInt(page) - 1) * parseInt(limit);
       const { count, rows } = await iuranbulananmodel.findAndCountAll({
         ...(page !== undefined &&
@@ -39,6 +39,7 @@ class IuranBulanan extends Server {
         include: [
           {
             model: orangtuamodel,
+            where: { ...(id !== undefined && { id }) },
             attributes: [
               "nama_ayah",
               "no_telepon_ayah",
@@ -61,31 +62,6 @@ class IuranBulanan extends Server {
     } catch (er) {
       console.log(er);
       return super.responseWithPagination(res, 500, er);
-    }
-  }
-  async detail(req, res) {
-    try {
-      const { id } = req.params;
-      const data = await iuranbulananmodel.findByPk(id, {
-        attributes: ["id", "tanggal_pembayaran", "status"],
-        include: [
-          {
-            model: orangtuamodel,
-            attributes: [
-              "nama_ayah",
-              "no_telepon_ayah",
-              "nama_ibu",
-              "no_telepon_ibu",
-              "alamat",
-            ],
-          },
-        ],
-      });
-      if (!data) return super.response(res, 404, "data tidak ditemukan");
-      return super.response(res, 200, "success", data);
-    } catch (er) {
-      console.log(er);
-      return super.response(res, 500, er);
     }
   }
   async edit(req, res) {
@@ -131,7 +107,6 @@ class IuranBulanan extends Server {
           },
         },
       });
-      console.log(date);
       return super.response(res, 200, "success", { total: count });
     } catch (er) {
       console.log(er);
